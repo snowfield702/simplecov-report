@@ -1,6 +1,5 @@
 name: simplecov-report / test
 on:
-  pull_request:
   push:
 jobs:
   simplecov-report:
