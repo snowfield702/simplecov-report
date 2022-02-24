@@ -3,10 +3,6 @@ description: 'Upload SimpleCov Report to S3 so that we can check it in the comme
 runs:
   using: composite
   steps:
-    - name: Install awscli
-      run: |
-        curl -sf "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-        unzip -q awscliv2.zip
-        sudo ./aws/install --update
-        aws --version
+    - name: Test S3 Access
+      run: aws s3 ls s3://
       shell: bash
