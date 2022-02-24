@@ -1,6 +1,6 @@
 name: simplecov-report / test
 on:
-  push:
+  pull_request:
 jobs:
   simplecov-report:
     runs-on: ubuntu-latest
@@ -14,4 +14,14 @@ jobs:
         with:
           aws-region: ap-northeast-1
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+      - uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+          working-directory: ./sample_project
+      - name: Run rspec
+        run: bundle exec rspec
+        working-directory: ./sample_project
       - uses: ./
+        with:
+          coverage_path: sample_project/coverage
+          upload_destination: simplecov_coverage
