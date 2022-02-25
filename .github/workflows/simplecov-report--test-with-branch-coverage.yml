@@ -1,4 +1,4 @@
-name: simplecov-report / test
+name: simplecov-report / test-with-branch-coverage
 on:
   pull_request:
 jobs:
@@ -19,12 +19,14 @@ jobs:
           bundler-cache: true
           working-directory: ./sample_simplecov
       - name: Run rspec
+        env:
+          ENABLE_COVERAGE: branch
         run: bundle exec rspec
         working-directory: ./sample_simplecov
       - uses: ./
         with:
           coverage_path: sample_simplecov/coverage
-          upload_destination: simplecov_coverage
+          upload_destination: simplecov_coverage_with_branch_coverage
           upload_bucket: snowfield702-sample
-          comment: Please check coverage report (no branch coverage)
+          comment: Please check coverage report (with branch coverage)
           domain: snowfield702-sample.s3.ap-northeast-1.amazonaws.com

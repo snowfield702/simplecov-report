@@ -5,13 +5,58 @@ inputs:
   coverage_path:
     required: true
     description: Path where simplecov outputs coverage files
+  upload_bucket:
+    required: true
+    description: Upload destination S3 bucket
   upload_destination:
     required: true
-    description: Upload destination S3 Key
+    description: Upload destination S3 key
+  comment:
+    required: false
+    description: Comments to output to pull request
+  domain:
+    required: false
+    description: Upload destination S3 domain
 runs:
   using: composite
   steps:
     - name: Upload coverage files
       if: github.event_name == 'pull_request'
-      run: aws s3 sync --acl public-read --delete "${{ inputs.coverage_path }}" "s3://snowfield702-sample/${{ inputs.upload_destination }}/${{ github.sha }}"
+      run: aws s3 sync --acl public-read --delete "${{ inputs.coverage_path }}" "s3://${{ inputs.upload_bucket }}/${{ inputs.upload_destination }}/${{ github.sha }}"
+      shell: bash
+    - name: Comment coverage report
+      if: github.event_name == 'pull_request'
+      run: |
+        last_run=$(cat sample_simplecov/coverage/.last_run.json)
+
+        line_coverage=$(echo "${last_run}" | jq .result.covered_percent)
+        if [ "$line_coverage" = "null" ]; then
+          line_coverage=$(echo "${last_run}" | jq .result.line)
+        fi
+
+        branch_coverage=$(echo "${last_run}" | jq .result.branch)
+
+        body=$(cat << EOF
+        ${{ inputs.comment }}
+
+        [Coverage report](https://${{ inputs.domain }}/${{ inputs.upload_destination }}/${{ github.sha }}/index.html)
+
+        | coverage type | value |
+        | ------- | ------- |
+        | line coverage | ${line_coverage}% |
+        EOF
+        )
+
+        if [ "$branch_coverage" != "null" ]; then
+          body+=$(cat << EOF
+
+        | branch coverage | ${branch_coverage}% |
+        EOF
+        )
+        fi
+
+        gh pr comment ${{ github.event.pull_request.number }} --body "${body}"
+      env:
+        GH_TOKEN: ${{ github.token }}
+        GH_REPO: ${{ github.repository }}
       shell: bash
