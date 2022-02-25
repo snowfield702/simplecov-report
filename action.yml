@@ -1,5 +1,6 @@
 name: Report SimpleCov Coverage
 description: Upload SimpleCov Report to S3 so that we can check it in the comments of Pull Request
+author: snowfield702
 inputs:
   coverage_path:
     required: true
