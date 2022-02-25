@@ -16,7 +16,7 @@
 
 require 'simplecov'
 SimpleCov.start do
-  enable_coverage :branch
+  enable_coverage ENV['ENABLE_COVERAGE'].to_sym if ENV['ENABLE_COVERAGE']
 end
 
 RSpec.configure do |config|
