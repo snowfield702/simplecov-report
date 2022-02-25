@@ -1,0 +1,17 @@
+name: Report SimpleCov Coverage
+description: Upload SimpleCov Report to S3 so that we can check it in the comments of Pull Request
+author: snowfield702
+inputs:
+  coverage_path:
+    required: true
+    description: Path where simplecov outputs coverage files
+  upload_destination:
+    required: true
+    description: Upload destination S3 Key
+runs:
+  using: composite
+  steps:
+    - name: Upload coverage files
+      if: github.event_name == 'pull_request'
+      run: aws s3 sync --acl public-read --delete "${{ inputs.coverage_path }}" "s3://snowfield702-sample/${{ inputs.upload_destination }}/${{ github.sha }}"
+      shell: bash
