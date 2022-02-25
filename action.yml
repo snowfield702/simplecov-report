@@ -18,3 +18,35 @@ runs:
       if: github.event_name == 'pull_request'
       run: aws s3 sync --acl public-read --delete "${{ inputs.coverage_path }}" "s3://${{ inputs.upload_bucket }}/${{ inputs.upload_destination }}/${{ github.sha }}"
       shell: bash
+    - name: Comment coverage report
+      if: github.event_name == 'pull_request'
+      run: |
+        last_run=$(cat sample_simplecov/coverage/.last_run.json)
+
+        line_coverage=$(echo "${last_run}" | jq .result.covered_percent)
+        if [ "$line_coverage" = "null" ]; then
+          line_coverage=$(echo "${last_run}" | jq .result.line)
+        fi
+
+        branch_coverage=$(echo "${last_run}" | jq .result.branch)
+
+        body=$(cat << EOF
+        | name | value |
+        | ------- | ------- |
+        | line coverage | ${line_coverage}% |
+        EOF
+        )
+
+        if [ "$branch_coverage" != "null" ]; then
+          body+=$(cat << EOF
+
+        | branch coverage | ${branch_coverage}% |
+        EOF
+        )
+        fi
+
+        gh pr comment ${{ github.event.pull_request.number }} --body "${body}"
+      env:
+        GH_TOKEN: ${{ github.token }}
+        GH_REPO: ${{ github.repository }}
+      shell: bash
