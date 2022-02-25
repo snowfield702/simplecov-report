@@ -17,11 +17,11 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           bundler-cache: true
-          working-directory: ./sample_project
+          working-directory: ./sample_simplecov
       - name: Run rspec
         run: bundle exec rspec
-        working-directory: ./sample_project
+        working-directory: ./sample_simplecov
       - uses: ./
         with:
-          coverage_path: sample_project/coverage
+          coverage_path: sample_simplecov/coverage
           upload_destination: simplecov_coverage
