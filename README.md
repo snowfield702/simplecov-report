@@ -27,7 +27,7 @@ You can check the detailed report results by clicking the link.
 
 ## Exsample
 
-```json
+```yaml
 name: simplecov-report / test
 on:
   pull_request:
