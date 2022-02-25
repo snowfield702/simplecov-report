@@ -11,6 +11,12 @@ inputs:
   upload_destination:
     required: true
     description: Upload destination S3 key
+  comment:
+    required: false
+    description: Comments to output to pull request
+  domain:
+    required: false
+    description: Upload destination S3 domain
 runs:
   using: composite
   steps:
@@ -31,7 +37,11 @@ runs:
         branch_coverage=$(echo "${last_run}" | jq .result.branch)
 
         body=$(cat << EOF
-        | name | value |
+        ${{ inputs.comment }}
+
+        [Coverage report](https://${{ inputs.domain }}/${{ inputs.upload_destination }}/${{ github.sha }}/index.html)
+
+        | coverage type | value |
         | ------- | ------- |
         | line coverage | ${line_coverage}% |
         EOF

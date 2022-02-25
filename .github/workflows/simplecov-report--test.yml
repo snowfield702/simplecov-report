@@ -26,3 +26,5 @@ jobs:
           coverage_path: sample_simplecov/coverage
           upload_destination: simplecov_coverage
           upload_bucket: snowfield702-sample
+          comment: Please check coverage report
+          domain: snowfield702-sample.s3.ap-northeast-1.amazonaws.com
