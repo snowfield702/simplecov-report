@@ -27,7 +27,7 @@ runs:
     - name: Comment coverage report
       if: github.event_name == 'pull_request'
       run: |
-        last_run=$(cat sample_simplecov/coverage/.last_run.json)
+        last_run=$(cat ${{ inputs.coverage_path }}/.last_run.json)
 
         line_coverage=$(echo "${last_run}" | jq .result.covered_percent)
         if [ "$line_coverage" = "null" ]; then
