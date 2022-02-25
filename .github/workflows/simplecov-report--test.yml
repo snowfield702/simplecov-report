@@ -25,3 +25,4 @@ jobs:
         with:
           coverage_path: sample_simplecov/coverage
           upload_destination: simplecov_coverage
+          upload_bucket: snowfield702-sample

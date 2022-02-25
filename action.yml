@@ -5,13 +5,16 @@ inputs:
   coverage_path:
     required: true
     description: Path where simplecov outputs coverage files
+  upload_bucket:
+    required: true
+    description: Upload destination S3 bucket
   upload_destination:
     required: true
-    description: Upload destination S3 Key
+    description: Upload destination S3 key
 runs:
   using: composite
   steps:
     - name: Upload coverage files
       if: github.event_name == 'pull_request'
-      run: aws s3 sync --acl public-read --delete "${{ inputs.coverage_path }}" "s3://snowfield702-sample/${{ inputs.upload_destination }}/${{ github.sha }}"
+      run: aws s3 sync --acl public-read --delete "${{ inputs.coverage_path }}" "s3://${{ inputs.upload_bucket }}/${{ inputs.upload_destination }}/${{ github.sha }}"
       shell: bash
