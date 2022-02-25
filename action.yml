@@ -15,7 +15,7 @@ inputs:
     required: false
     description: Comments to output to pull request
   domain:
-    required: false
+    required: true
     description: Upload destination S3 domain
 runs:
   using: composite
